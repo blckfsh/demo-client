@@ -68,7 +68,7 @@ const Home: NextPage<Props> = (props: FuncProps) => {
           props.tokens.map((item: {id?: number, owner?: string}, index) => {
             return <div key={index} className={styles.card}>
               <p>Id: {item.id}</p>
-              <p>Id: {item.owner}</p>
+              <p>Owner: {item.owner}</p>
             </div>
           }) : ''
         }

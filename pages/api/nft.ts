@@ -9,7 +9,7 @@ let provider: ethers.providers.JsonRpcProvider;
 let contract: ethers.Contract;
 
 url = `${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`; // set the provider url using the alchemy api key
-addr = "0xDD492A4fA0525c029693886003E752BC94575Fcc"; // new smart contract (goerli)
+addr = "0x54B77a684eBD3C0564B60076c738E52416015090"; // new smart contract (goerli)
 provider = new ethers.providers.JsonRpcProvider(url); // set the RPC provider
 contract = new ethers.Contract(addr, MyToken.abi, provider); // set the contract using contract address, abi, and the provider
 
