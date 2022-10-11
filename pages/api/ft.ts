@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import axios from "axios";
 
-import MyToken from "../abi/MyToken.json"; // import the Nft ABI
+import MyCoin from "../abi/MyCoin.json"; // import the Nft ABI
 
 let url: string;
 let addr: string;
@@ -10,9 +10,9 @@ let provider: ethers.providers.JsonRpcProvider;
 let contract: ethers.Contract;
 
 url = `${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`; // set the provider url using the alchemy api key
-addr = "0x54B77a684eBD3C0564B60076c738E52416015090"; // new smart contract (goerli)
+addr = "0xA341c96e0b59d2D3c41bCE76dAfF1Da19a3Db578"; // new smart contract (goerli)
 provider = new ethers.providers.JsonRpcProvider(url); // set the RPC provider
-contract = new ethers.Contract(addr, MyToken.abi, provider); // set the contract using contract address, abi, and the provider
+contract = new ethers.Contract(addr, MyCoin.abi, provider); // set the contract using contract address, abi, and the provider
 
 // config the web3 connection
 export const web3ModalConnect = async () => {
@@ -68,22 +68,48 @@ export const getTotalSupply = async () => {
     return data;
 }
 
-export const getOwnerOfTokenId = async (id: number) => {
-    const data = await contract.ownerOf(id);
+export const getBalanceOfCaller = async (address: string) => {
+    const data = await contract.balanceOf(address);
 
     return data;
 }
 
-// mint a nft
-export const mintNft = async (mintAddress: string) => {
+export const mintCoin = async (to: string, value: string) => {
     let override = {
         gasLimit: 300000
     }
+    let amount = ethers.utils.parseEther(value);
 
     const signer: ethers.providers.JsonRpcSigner = await getSigner();
-    const address: string = await signer.getAddress();
-    let contract: ethers.Contract = new ethers.Contract(addr, MyToken.abi, signer);
+    let contract: ethers.Contract = new ethers.Contract(addr, MyCoin.abi, signer);
 
-    const transaction = await contract.safeMint(mintAddress, override);
+    const transaction = await contract.mint(to, amount, override);
+    await transaction.wait();
+}
+
+export const transferCoin = async (to: string, value: string) => {
+    let override = {
+        gasLimit: 300000
+    }
+    
+    let amount = ethers.utils.parseEther(value);
+
+    const signer: ethers.providers.JsonRpcSigner = await getSigner();
+    let contract: ethers.Contract = new ethers.Contract(addr, MyCoin.abi, signer);
+
+    const transaction = await contract.transfer(to, amount, override);
+    await transaction.wait();
+}
+
+export const burnCoin = async (value: string) => {
+    let override = {
+        gasLimit: 300000
+    }
+    let amount = ethers.utils.parseEther(value);
+
+    const signer: ethers.providers.JsonRpcSigner = await getSigner();
+    let contract: ethers.Contract = new ethers.Contract(addr, MyCoin.abi, signer);
+
+    const transaction = await contract.burn(amount, override);
     await transaction.wait();
 }
